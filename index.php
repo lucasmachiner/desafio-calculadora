@@ -27,9 +27,9 @@
         aria-label="Recipient's username" aria-describedby="button-addon2">
       <button class="btn btn-success " type="submit" id="button-addon2">Calcular</button>
     </form>
-    <div>
 
-    </div>
+
+
     <!-- <fieldset class=" ">
       <legend class="col-form-label col-sm-2 pt-0">Radios</legend> 
       <div class="row px-5 py-3">
@@ -53,15 +53,17 @@
         </div>
       </div>
     </fieldset> -->
-  </div>
-  <?php 
+
+    <?php 
     $num1 = $_GET["num1"];
     $num2 = $_GET["num2"];
     $operation = $_GET["operation"];
     
-    echo "<p>" . $num1 . " " . $operation . " " .$num2 . "</p>";
+    echo "<div class='card p-1 mt-3 text-center'>" . $num1 . " " . $operation . " " .$num2 . " = " . "</div>";
     
   ?>
+  </div>
+
 </body>
 
 </html>
