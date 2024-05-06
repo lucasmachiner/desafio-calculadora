@@ -55,12 +55,75 @@
     </fieldset> -->
 
     <?php 
+
+    session_start();
+
+    // tentar passar a session historico quando clicar em C e transformar o historico em um array vazio
+    // if(isset($_POST['limpar'])){
+    //     $_SESSION['historico'] = array();
+    // }
+
+    if(!isset($_SESSION['historico'])){
+        $_SESSION['historico'] = array();
+    }
+
+    if(isset($_GET["num1"]) && isset($_GET["num2"]) && isset($_GET["operation"])){
+
     $num1 = $_GET["num1"];
     $num2 = $_GET["num2"];
     $operation = $_GET["operation"];
-    
-    echo "<div class='card p-1 mt-3 text-center'>" . $num1 . " " . $operation . " " .$num2 . " = " . "</div>";
-    
+
+    $result = 0;
+
+    switch($operation){
+        case '+':
+            $result = $num1 + $num2;
+            break;
+        case '-':
+            $result = $num1 - $num2;
+            break;
+        case '*':
+            $result = $num1 * $num2;
+            break;
+        case '/':
+            if($num2 != 0){
+                $result = $num1 / $num2;
+            }else{
+                $result = "ERRO";
+            }
+            break;
+        case '^':
+            $result = pow($num1,$num2);
+            break; 
+    }
+
+    array_unshift($_SESSION['historico'], "$num1 $operation $num2 = $result");
+   
+    echo "<div class='card p-1 mt-3 text-center'>" . $num1 . " " . $operation . " " .$num2 . " = ".$result ."</div>";
+}
+
+
+    if(!empty($_SESSION['historico'])){
+        echo "<div class='card mt-3 '>";
+        echo "<div class='card-header'>Historico de Operações</div>";
+        echo "<div class='card-body'>";
+        echo "<div class='list-group>";
+        foreach($_SESSION['historico'] as $op){
+            echo "<div class'list-group-item text-center'>".$op."</div>";
+        }
+        echo "</div>";
+        echo "</div>";
+
+        // tentativa de fazer o botao C pra limpar
+        // echo "<div class ='card-footer'>";
+        // echo "<form metho='post'>";
+        // echo "<button type='submit' name='limpar' class='btn btn-danger'>C</button>";
+        // echo "</form>";
+        // echo "</div>";
+        echo "</div>";
+        echo "</div>";
+    }
+
   ?>
   </div>
 
