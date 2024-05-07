@@ -28,6 +28,7 @@
         aria-label="Recipient's username" aria-describedby="button-addon2">
       <button class="btn btn-success" type="submit" id="button-addon2">Calcular</button>
       <button type='submit' name='limpar' value='limpar' class='btn btn-danger'>C</button>
+      <button type='submit' name='salvar' value='salvar' class='btn btn-primary'>Salvar</button>
     </form>
 
 
@@ -62,11 +63,10 @@
 
     //TODO função de salvar a operação
     function Salvar($num1, $operation, $num2){
-      $num1 = isset($_GET['num1']) ? $_GET['num1'] : '';
-      $operation = isset($_GET['operation']) ? $_GET['operation'] : '';
-      $num2 = isset($_GET['num2']) ? $_GET['num2'] : '';
       
-      $_SESSION['inputs'] = array('num1' => $num1, 'operation' => $operation, 'num2' => $num2);
+      session_start();
+
+      $_SESSION['ultima_operacao'] = array('num1' => $num1, 'operation' => $operation, 'num2' => $num2);
     }
     
 
@@ -90,6 +90,11 @@
       $num1 = (float) $_GET["num1"];
       $num2 = (float) $_GET["num2"];
       $operation = $_GET["operation"];
+
+      if(isset($_GET['salvar']) && $_GET['salvar'] === 'salvar'){
+        Salvar($num1,$operation,$num2);
+      }
+      
 
       $result;
 
