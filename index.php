@@ -1,160 +1,113 @@
+<?php
+session_start();
+
+include 'funcao.php';
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <title>Calculadora</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora</title>
+    <link rel="stylesheet" href="Style.css">
 </head>
-
 <body>
-  <div class="container-sm pt-4">
-    <form method="get" class="input-group d-flex">
-      <!-- <span class="input-group-text">Calcular</span> -->
-      <input type="text" name="num1" placeholder="Numero 1" aria-label="First number" class="form-control w-auto">
-      <select name="operation" class="form-select bg-secondary text-white text-center w-0 fw-bold"
-        aria-label="Default select example">
-        <option value="+">+</option>
-        <option value="-">-</option>
-        <option value="*">*</option>
-        <option value="/">/</option>
-        <option value="^">^</option>
-        <option value="!">!</option>
-      </select>
-      <!-- <input type="text" name="num2" aria-label="Last number" class="form-control w-auto"> -->
-      <input type="text" name="num2" class="form-control w-auto" placeholder="Numero 2"
-        aria-label="Recipient's username" aria-describedby="button-addon2">
-      <button class="btn btn-success" type="submit" id="button-addon2">Calcular</button>
-      <button type='submit' name='limpar' value='limpar' class='btn btn-danger'>C</button>
-      <button type='submit' name='salvar' value='salvar' class='btn btn-primary'>Salvar</button>
-    </form>
+   
+    <div class="calculadora">         
+        <h1>Calculadora</h1>  
 
+        <form method="get" action="">   
+            <!-- 1° Número -->
+            <input type="text" name="num1" placeholder="Primeiro numero">  
+            <!-- Operador -->
+            <select name="oper" required>                 
+                <option value="+">+</option>                 
+                <option value="-">-</option>                 
+                <option value=""></option>                 
+                <option value="/">/</option>                 
+                <option value="^">^</option>                 
+                <option value="!">!</option>             
+            </select> 
+            <!-- 2° Número -->
+            <input type="text" name="num2" placeholder="Segundo numero">             
+            <br>             
+            <input class="calcula" type="submit" value="Calcular">  
+            <div class="container">
+                <button name="salvar" class="btn-amarelo">Salvar</button>
+                <button name="pegar"class="btn-cinza">Pegar Valores</button>
+                <button name="m" value="memoria" class="btn-azul">M</button>
+                <button name="limpar" value="apagar"class="btn-azul">Apagar Historico</button>
+            </div>                    
+        </form>
 
-
-    <!-- <fieldset class=" ">
-      <legend class="col-form-label col-sm-2 pt-0">Radios</legend> 
-      <div class="row px-5 py-3">
-        <div class="col-4">
-          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
-          <label class="form-check-label" for="gridRadios1">
-            First radio
-          </label>
-        </div>
-        <div class="col-4">
-          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
-          <label class="form-check-label" for="gridRadios2">
-            Second radio
-          </label>
-        </div>
-        <div class="col-4">
-          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="option3">
-          <label class="form-check-label" for="gridRadios3">
-            Third disabled radio
-          </label>
-        </div>
-      </div>
-    </fieldset> -->
 
     <?php
 
-    session_start();
-
-    //TODO função de salvar a operação
-    function Salvar($num1, $operation, $num2){
-      
-      session_start();
-
-      $_SESSION['ultima_operacao'] = array('num1' => $num1, 'operation' => $operation, 'num2' => $num2);
-    }
+    $num1 = intval($_GET['num1']);
+    $oper = $_GET['oper'];
+    $num2 = intval($_GET['num2']);
     
+    if (isset($_GET['num1']) && isset($_GET['oper'])) {
 
-    function LimparHistorico()
-    {
-      if (!isset($_GET['limpar'])) {
-        session_start();
-      }
 
-      $_SESSION['historico'] = array();
+        $res = Calcular($num1, $oper, $num2); 
+
+        $texto = "";
+
+        if($num2 != null){
+            $texto = "$num1 $oper $num2 = $res";
+            echo "<div class=\"resposta\">
+                    $texto
+                </div>";
+        }
+        elseif($num2 == null && $num1 != null){
+            $texto = "$num1 $oper = $res";
+            echo "<div class=\"resposta\">
+                    $texto
+                </div>";
+        }
+        
+        if($texto != '') SalvarHistorico($texto);
+        
     }
 
-    if (isset($_GET["limpar"]) == "limpar") {
-      LimparHistorico();
-    }
+    if(isset($_GET['salvar'])) Salvar($num1, $oper, $num2);
+    if (isset($_GET['pegar'])) Pegar();
 
-
-
-    if (isset($_GET["num1"]) && isset($_GET["num2"]) && isset($_GET["operation"])) {
-
-      $num1 = (float) $_GET["num1"];
-      $num2 = (float) $_GET["num2"];
-      $operation = $_GET["operation"];
-
-      if(isset($_GET['salvar']) && $_GET['salvar'] === 'salvar'){
-        Salvar($num1,$operation,$num2);
-      }
-      
-
-      $result;
-
-      switch ($operation) {
-        case '+':
-          $result = $num1 + $num2;
-          break;
-        case '-':
-          $result = $num1 - $num2;
-          break;
-        case '*':
-          $result = $num1 * $num2;
-          break;
-        case '/':
-          if ($num2 != 0) {
-            $result = $num1 / $num2;
-          } else {
-            $result = "ERRO";
-          }
-          break;
-        case '^':
-          $result = pow($num1, $num2);
-          break;
-        case '!':
-          $result = 1;
-          for($i=$num1; $i > $num2;$i++){
-            $result *= $i;
-          }
-          break;
-      }
-
-      // if () {
-      array_unshift($_SESSION['historico'], (($num1 && $num2) == 0) && $operation === "+" ? null : "$num1 $operation $num2 = $result");
-      // }
+    if (isset($_GET['m'])) {
+        if (!isset($_SESSION['toggle'])) {
+            $_SESSION['toggle'] = false;
+        }
     
-
-      echo "<div class='card p-1 mt-3 text-center'>" . $num1 . " " . $operation . " " . $num2 . " = " . $result . "</div>";
-    }
-
-
-    if (!empty($_SESSION['historico'])) {
-      echo "<div class='card mt-3 '>";
-      echo "<div class='card-header'>Historico de Operações</div>";
-      echo "<div class='card-body'>";
-      echo "<div class='list-group>";
-      foreach ($_SESSION['historico'] as $op) {
-        echo "<div class'list-group-item text-center'>" . $op . "</div>";
-      }
-      echo "</div>";
-      echo "</div>";
-
-      // TODO -> tentativa de fazer o botao C pra limpar
+        if ($_SESSION['toggle']) Salvar($num1, $oper, $num2);
+        else {
+            Pegar();
+        }
     
-      echo "</div>";
-      echo "</div>";
+        $_SESSION['toggle'] = !$_SESSION['toggle'];
     }
+
+    if(isset($_GET['limpar']) && $_GET['limpar'] == "apagar") LimparSessoes();
 
     ?>
-  </div>
+
+    <h1>Histórico</h1>
+
+    <?php
+
+    if(isset($_SESSION['historico'])){
+        foreach ($_SESSION['historico'] as $operacao){
+            echo "<div class=\"historico\">
+                    $operacao
+                  </div>";
+        }
+    }
+
+    echo "</div>";
+
+    ?>
 
 </body>
-
 </html>
