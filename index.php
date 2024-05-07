@@ -21,6 +21,7 @@
         <option value="*">*</option>
         <option value="/">/</option>
         <option value="^">^</option>
+        <option value="!">!</option>
       </select>
       <!-- <input type="text" name="num2" aria-label="Last number" class="form-control w-auto"> -->
       <input type="text" name="num2" class="form-control w-auto" placeholder="Numero 2"
@@ -58,6 +59,16 @@
     <?php
 
     session_start();
+
+    //TODO função de salvar a operação
+    function Salvar($num1, $operation, $num2){
+      $num1 = isset($_GET['num1']) ? $_GET['num1'] : '';
+      $operation = isset($_GET['operation']) ? $_GET['operation'] : '';
+      $num2 = isset($_GET['num2']) ? $_GET['num2'] : '';
+      
+      $_SESSION['inputs'] = array('num1' => $num1, 'operation' => $operation, 'num2' => $num2);
+    }
+    
 
     function LimparHistorico()
     {
@@ -101,6 +112,12 @@
           break;
         case '^':
           $result = pow($num1, $num2);
+          break;
+        case '!':
+          $result = 1;
+          for($i=$num1; $i > $num2;$i++){
+            $result *= $i;
+          }
           break;
       }
 
